@@ -238,7 +238,6 @@ const CONFIG = {
   avatarUrl: "trang.webp",
   leftSwingImage: "2.webp",
   rightSwingImage: "3.webp",
-  // DANH SÁCH ẢNH TRÔI MỚI
   floatingPhotos: [
     "00f75fd1ad124ed08eb985ab87116db5.webp",
     "0101b13238eb43308e35690a358e364a.webp",
@@ -352,7 +351,6 @@ function preloadImages() {
 
 function rand(a,b){return a+Math.random()*(b-a)}
 
-// Thuật toán Đảo Hàng Đợi (Fisher-Yates Shuffle) - Giúp xoay vòng ngẫu nhiên không lặp lại
 function shufflePhotoQueue() {
   photoQueue = Array.from({length: loadedPhotoImgs.length}, (_, i) => i);
   for (let i = photoQueue.length - 1; i > 0; i--) {
@@ -369,7 +367,6 @@ function getNextPhotoIndex() {
 }
 
 function getRandomItem() {
-  // 75% tỉ lệ ra Ảnh, 25% tỉ lệ ra Chữ
   const isText = Math.random() < 0.25;
   if (isText) {
     return {
@@ -417,6 +414,7 @@ function drawBackground(t){
   ctx.globalAlpha=1;
 }
 
+/* VẼ ẢNH VỚI TỈ LỆ CHUẨN (KHÔNG BỊ BÈ / MÉO HÌNH) */
 function drawFloatingItems(t, dt) {
   ctx.save();
   ctx.font = `600 ${Math.max(14, Math.min(20, W * 0.018))}px Mali, serif`;
@@ -424,14 +422,14 @@ function drawFloatingItems(t, dt) {
   
   floatItems.forEach((o) => {
     o.y -= o.speed * (dt / 1000);
-    if (o.y < -60) {
+    if (o.y < -70) {
       const item = getRandomItem();
       o.type = item.type;
       o.val = item.val;
       o.x = rand(.05, .95) * W;
       o.y = H + rand(20, 80);
       o.speed = rand(18, 28);
-      o.size = rand(40, 60);
+      o.size = rand(42, 62);
     }
     const flicker = .85 + .15 * Math.sin(t * .0012 + o.p);
     ctx.globalAlpha = flicker;
@@ -445,11 +443,12 @@ function drawFloatingItems(t, dt) {
       ctx.fillText(o.val, o.x, o.y);
     } else {
       const img = loadedPhotoImgs[o.val % loadedPhotoImgs.length];
-      if (img && img.complete) {
+      if (img && img.complete && img.naturalWidth > 0) {
         ctx.save();
         ctx.translate(o.x, o.y);
         ctx.shadowBlur = 10;
         ctx.shadowColor = "rgba(255, 230, 180, 0.4)";
+        
         const sz = o.size;
         ctx.beginPath();
         if (ctx.roundRect) {
@@ -458,7 +457,23 @@ function drawFloatingItems(t, dt) {
           ctx.rect(-sz/2, -sz/2, sz, sz);
         }
         ctx.clip();
-        ctx.drawImage(img, -sz/2, -sz/2, sz, sz);
+
+        // Cắt vừa khung vừa giữ đúng tỉ lệ ảnh gốc (Cover algorithm)
+        const imgRatio = img.naturalWidth / img.naturalHeight;
+        let sWidth = img.naturalWidth;
+        let sHeight = img.naturalHeight;
+        let sX = 0;
+        let sY = 0;
+
+        if (imgRatio > 1) { // Ảnh ngang
+          sWidth = img.naturalHeight;
+          sX = (img.naturalWidth - sWidth) / 2;
+        } else { // Ảnh dọc
+          sHeight = img.naturalWidth;
+          sY = (img.naturalHeight - sHeight) / 2;
+        }
+
+        ctx.drawImage(img, sX, sY, sWidth, sHeight, -sz/2, -sz/2, sz, sz);
         ctx.restore();
       }
     }
@@ -483,7 +498,7 @@ function initFloatItems(){
       y: (H / count) * i + rand(-30, 30),
       p: rand(0, 6.28),
       speed: rand(18, 28),
-      size: rand(40, 60)
+      size: rand(42, 62)
     });
   }
 }
