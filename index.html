@@ -238,12 +238,7 @@ const CONFIG = {
   avatarUrl: "trang.webp",
   leftSwingImage: "2.webp",
   rightSwingImage: "3.webp",
-  lanternImages: [
-    "2.webp",
-    "3.webp",
-    "lantern.webp"
-  ],
-  // DANH SÁCH CÁC ẢNH BAY CÙNG CHỮ TRÊN TRỜI
+  // DANH SÁCH ẢNH TRÔI MỚI
   floatingPhotos: [
     "00f75fd1ad124ed08eb985ab87116db5.webp",
     "0101b13238eb43308e35690a358e364a.webp",
@@ -345,14 +340,11 @@ const hint = document.querySelector(".hint");
 const letterCard = document.getElementById("letterCard");
 
 let W=0,H=0,dpr=1, raf=0, opened=false, holdTimer=0, typingTimer=0;
-let stars=[], lanterns=[], floatItems=[];
-let loadedLanternImgs = [];
+let stars=[], floatItems=[];
 let loadedPhotoImgs = [];
+let photoQueue = [];
 
 function preloadImages() {
-  CONFIG.lanternImages.forEach(url => {
-    const img = new Image(); img.src = url; loadedLanternImgs.push(img);
-  });
   CONFIG.floatingPhotos.forEach(url => {
     const img = new Image(); img.src = url; loadedPhotoImgs.push(img);
   });
@@ -360,34 +352,55 @@ function preloadImages() {
 
 function rand(a,b){return a+Math.random()*(b-a)}
 
+// Thuật toán Đảo Hàng Đợi (Fisher-Yates Shuffle) - Giúp xoay vòng ngẫu nhiên không lặp lại
+function shufflePhotoQueue() {
+  photoQueue = Array.from({length: loadedPhotoImgs.length}, (_, i) => i);
+  for (let i = photoQueue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [photoQueue[i], photoQueue[j]] = [photoQueue[j], photoQueue[i]];
+  }
+}
+
+function getNextPhotoIndex() {
+  if (photoQueue.length === 0) {
+    shufflePhotoQueue();
+  }
+  return photoQueue.pop();
+}
+
+function getRandomItem() {
+  // 75% tỉ lệ ra Ảnh, 25% tỉ lệ ra Chữ
+  const isText = Math.random() < 0.25;
+  if (isText) {
+    return {
+      type: 'text',
+      val: CONFIG.flyingTexts[Math.floor(rand(0, CONFIG.flyingTexts.length))]
+    };
+  } else {
+    return {
+      type: 'image',
+      val: getNextPhotoIndex()
+    };
+  }
+}
+
 function resize(){
   const newW=innerWidth, newH=innerHeight;
   dpr=Math.min(devicePixelRatio||1,2);
   canvas.width=Math.floor(newW*dpr); canvas.height=Math.floor(newH*dpr);
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  if(W>0 && H>0 && stars.length && lanterns.length){
+  if(W>0 && H>0 && stars.length){
     const sx=newW/W, sy=newH/H;
     stars.forEach(s=>{s.x*=sx; s.y*=sy});
-    lanterns.forEach(l=>{l.x*=sx; l.y*=sy});
     floatItems.forEach(o=>{o.x*=sx; o.y*=sy});
   }
   W=newW; H=newH;
   if(!stars.length) makeStars();
-  if(!lanterns.length) makeLanterns();
 }
 
 function makeStars(){
   const count=Math.min(900, Math.max(280, Math.floor(W*H/1800)));
   stars=Array.from({length:count},()=>({x:rand(0,W),y:rand(0,H),r:rand(.3,1.45),a:rand(.25,1),p:rand(0,Math.PI*2),s:rand(.3,1.2)}));
-}
-
-function makeLanterns(){
-  const count=innerWidth<700?8:14;
-  lanterns=Array.from({length:count},()=>({
-    x:rand(-.05,1.05)*W,y:rand(.15,.95)*H,size:rand(28,45),
-    speed:rand(16,34),drift:rand(12,34),phase:rand(0,Math.PI*2),
-    imgIdx: Math.floor(Math.random() * CONFIG.lanternImages.length)
-  }));
 }
 
 function drawBackground(t){
@@ -404,39 +417,6 @@ function drawBackground(t){
   ctx.globalAlpha=1;
 }
 
-function drawLanternImage(x, y, size, imgIdx) {
-  const img = loadedLanternImgs[imgIdx % loadedLanternImgs.length];
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.shadowBlur = 15;
-  ctx.shadowColor = "rgba(255,180,100,0.6)";
-
-  if (img && img.complete) {
-    ctx.drawImage(img, -size / 2, -size / 2, size, size);
-  } else {
-    ctx.fillStyle = "#ffb14d";
-    ctx.fillRect(-size / 2, -size / 2, size, size);
-  }
-
-  ctx.restore();
-}
-
-function getRandomItem() {
-  const isText = Math.random() < 0.5; // 50% tỉ lệ ra chữ, 50% ra ảnh
-  if (isText) {
-    return {
-      type: 'text',
-      val: CONFIG.flyingTexts[Math.floor(rand(0, CONFIG.flyingTexts.length))]
-    };
-  } else {
-    return {
-      type: 'image',
-      val: Math.floor(rand(0, loadedPhotoImgs.length))
-    };
-  }
-}
-
-/* VẼ VÀ CẬP NHẬT CHỮ + ẢNH TRÔI */
 function drawFloatingItems(t, dt) {
   ctx.save();
   ctx.font = `600 ${Math.max(14, Math.min(20, W * 0.018))}px Mali, serif`;
@@ -451,7 +431,7 @@ function drawFloatingItems(t, dt) {
       o.x = rand(.05, .95) * W;
       o.y = H + rand(20, 80);
       o.speed = rand(18, 28);
-      o.size = rand(35, 55);
+      o.size = rand(40, 60);
     }
     const flicker = .85 + .15 * Math.sin(t * .0012 + o.p);
     ctx.globalAlpha = flicker;
@@ -470,10 +450,13 @@ function drawFloatingItems(t, dt) {
         ctx.translate(o.x, o.y);
         ctx.shadowBlur = 10;
         ctx.shadowColor = "rgba(255, 230, 180, 0.4)";
-        // Vẽ khung bo góc nhẹ cho ảnh trôi
         const sz = o.size;
         ctx.beginPath();
-        ctx.roundRect(-sz/2, -sz/2, sz, sz, 8);
+        if (ctx.roundRect) {
+          ctx.roundRect(-sz/2, -sz/2, sz, sz, 8);
+        } else {
+          ctx.rect(-sz/2, -sz/2, sz, sz);
+        }
         ctx.clip();
         ctx.drawImage(img, -sz/2, -sz/2, sz, sz);
         ctx.restore();
@@ -485,24 +468,11 @@ function drawFloatingItems(t, dt) {
 
 function drawScene(t,dt){
   drawBackground(t);
-  
-  lanterns.forEach(l=>{
-    l.y-=l.speed*dt/1000;
-    if(l.y<-90){
-      l.x=rand(-.05,1.05)*W; l.size=rand(28,45);
-      l.speed=rand(16,34); l.drift=rand(12,34); l.phase=rand(0,Math.PI*2);
-      l.y=H+rand(30,120);
-      l.imgIdx = Math.floor(Math.random() * CONFIG.lanternImages.length);
-    }
-    const x=l.x+Math.sin(t*.00035+l.phase)*l.drift;
-    drawLanternImage(x, l.y, l.size, l.imgIdx);
-  });
-
   drawFloatingItems(t, dt);
 }
 
 function initFloatItems(){
-  const count = 22; 
+  const count = 28; 
   floatItems = [];
   for(let i=0; i<count; i++){
     const item = getRandomItem();
@@ -513,7 +483,7 @@ function initFloatItems(){
       y: (H / count) * i + rand(-30, 30),
       p: rand(0, 6.28),
       speed: rand(18, 28),
-      size: rand(35, 55)
+      size: rand(40, 60)
     });
   }
 }
@@ -607,6 +577,7 @@ addEventListener("resize", () => {
 });
 
 preloadImages();
+shufflePhotoQueue();
 resize();
 initFloatItems();
 loop(0);
