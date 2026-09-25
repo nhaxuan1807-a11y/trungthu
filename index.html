@@ -66,7 +66,7 @@ button{font:inherit}
   background: radial-gradient(circle,rgba(255,230,150,.8),rgba(255,190,90,.4) 30%,transparent 50%);
 }
 
-/* ---- 2 Ảnh lơ lửng bên dưới ---- */
+/* ---- 2 Ảnh lơ lửng góc dưới ---- */
 .floating-photo {
   position: absolute;
   bottom: calc(8% + env(safe-area-inset-bottom, 0px));
@@ -137,9 +137,6 @@ button{font:inherit}
  transition:opacity .3s ease, transform .3s ease;
 }
 .letter-card.hidden{opacity:0;transform:scale(.94);pointer-events:none}
-.letter-ornament{display:flex;align-items:center;gap:10px;color:var(--gold-deep);margin-bottom:12px;flex:0 0 auto}
-.letter-ornament svg{width:20px;height:20px;flex:none}
-.letter-ornament span{font-size:13px;letter-spacing:.08em;color:#a9793a}
 
 .close{
  position:absolute;z-index:30;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;
@@ -157,30 +154,16 @@ button{font:inherit}
  padding-right: 8px;
  -webkit-overflow-scrolling: touch;
 }
-.letter-content::-webkit-scrollbar {
-  width: 5px;
-}
-.letter-content::-webkit-scrollbar-thumb {
-  background: var(--gold-deep);
-  border-radius: 10px;
-}
-.letter-content::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.05);
-}
+.letter-content::-webkit-scrollbar { width: 5px; }
+.letter-content::-webkit-scrollbar-thumb { background: var(--gold-deep); border-radius: 10px; }
+.letter-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); }
 
 .letter-content p{margin:0;color:var(--ink);font-weight:600;white-space:pre-wrap;overflow-wrap:anywhere;
  font-size:clamp(15px,1.8vw,19px);line-height:1.65}
 .cursor{display:inline-block;width:2px;height:1.1em;background:#c98a35;margin-left:4px;vertical-align:-.15em;animation:blink .72s step-end infinite}
 
 .letter-rabbit {
-  position: absolute;
-  right: 16px;
-  bottom: 10px;
-  width: 65px;
-  height: 65px;
-  object-fit: contain;
-  pointer-events: none;
-  animation: bob 4s ease-in-out infinite;
+  position: absolute; right: 16px; bottom: 10px; width: 65px; height: 65px; object-fit: contain; pointer-events: none; animation: bob 4s ease-in-out infinite;
 }
 
 .heart{
@@ -188,7 +171,6 @@ button{font:inherit}
  border:0;background:none;cursor:pointer;display:grid;place-items:center;
 }
 .heart svg{width:36px;height:36px;filter:drop-shadow(0 0 8px rgba(255,150,120,.75));animation:heart 3.2s ease-in-out infinite}
-.heart:hover svg{transform:scale(1.08)}
 
 @keyframes pulse{50%{transform:scale(1.08);opacity:.7}}
 @keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.95)}to{opacity:1;transform:none}}
@@ -197,65 +179,23 @@ button{font:inherit}
 @keyframes heart{50%{transform:scale(1.1)}}
 
 .heart-particle{
-  position:fixed;z-index:40;pointer-events:none;font-size:18px;color:#ff8f7a;
-  will-change:transform,opacity;
+  position:fixed;z-index:40;pointer-events:none;font-size:18px;color:#ff8f7a;will-change:transform,opacity;
 }
 
-@media(max-width:520px){
- .moon-wrap{top:calc(18px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));width:min(110px,28vw,16vh)}
- .floating-photo.left { left: 3vw; }
- .floating-photo.right { right: 3vw; }
- .floating-photo { width: 100px; }
- .hint{bottom:calc(3% + env(safe-area-inset-bottom,0px));font-size:13px;width:90%}
- .letter-card{padding:20px 16px 65px}
- .letter-rabbit{width:50px;height:50px;right:10px;bottom:8px}
-}
-
-/* Nút Bật/Tắt nhạc ở góc trên bên trái */
 .music-toggle-fixed {
-  position: fixed;
-  top: calc(24px + env(safe-area-inset-top, 0px));
-  left: calc(24px + env(safe-area-inset-left, 0px));
-  z-index: 100;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: none;
-  background: #8a5a1c00;
-  color: #8a5a1c00;
-  font-size: 18px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  display: grid;
-  place-items: center;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-.music-toggle-fixed:hover {
-  transform: scale(1.1);
-}
-.music-toggle-fixed:active {
-  transform: scale(0.95);
-}
-@media(max-width: 520px) {
-  .music-toggle-fixed {
-    top: calc(18px + env(safe-area-inset-top, 0px));
-    left: calc(14px + env(safe-area-inset-left, 0px));
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
-  }
+  position: fixed; top: calc(24px + env(safe-area-inset-top, 0px)); left: calc(24px + env(safe-area-inset-left, 0px)); z-index: 100;
+  width: 42px; height: 42px; border-radius: 50%; border: none; background: #8a5a1c00; color: #8a5a1c00; font-size: 18px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); display: grid; place-items: center; transition: transform 0.2s ease, opacity 0.2s ease;
 }
 </style>
 </head>
 <body>
   <main id="intro" class="intro" aria-label="Thiệp Trung Thu">
-    <!-- Nút Bật/Tắt nhạc cố định bên trái ở trên -->
     <button class="music-toggle-fixed" id="globalMusicBtn" aria-label="Bật/Tắt nhạc">🎵</button>
 
     <canvas id="scene"></canvas>
     <div class="vignette"></div>
 
-    <!-- 2 Ảnh lơ lửng phía dưới -->
     <div class="floating-photo left">
       <img id="swingImgLeft" src="" alt="Left Swing Image">
     </div>
@@ -264,7 +204,6 @@ button{font:inherit}
       <img id="swingImgRight" src="" alt="Right Swing Image">
     </div>
 
-    <!-- Mặt trăng ảnh cá nhân -->
     <div class="moon-wrap" id="moonHit" tabindex="0" role="button" aria-label="Ấn và giữ ảnh để mở thiệp">
       <div class="moon-glow"></div>
       <div class="moon">
@@ -278,10 +217,7 @@ button{font:inherit}
   <section class="letter-modal" id="letterModal" aria-hidden="true">
     <div class="modal-backdrop" id="modalBackdrop"></div>
     <div class="letter-stage">
-      
-      <!-- Nút Đóng -->
       <button class="close" id="closeBtn" aria-label="Đóng">×</button>
-      
       <div class="letter-card" id="letterCard" role="dialog" aria-modal="true" aria-label="Thư gửi bạn">
         <div class="letter-content">
           <p id="letterText"></p><span class="cursor"></span>
@@ -307,18 +243,23 @@ const CONFIG = {
     "3.webp",
     "lantern.webp"
   ],
-  //sử lời nhắn bay lên ở đây
+  // DANH SÁCH CÁC ẢNH BAY CÙNG CHỮ TRÊN TRỜI
+  floatingPhotos: [
+    "2.webp",
+    "3.webp",
+    "4.webp",
+    "lantern.webp",
+    "trang.webp"
+  ],
   flyingTexts: [
     "Mãi bên nhau nhé",
     "Trung thu vui vẻ nha",
   ],
-  //sửa lời nhắn trong thiệp
   letter: `Gửi bạn,\n\nTrung thu năm nay lại về rồi 🌕 Ngoài kia đèn lồng đã treo kín phố, mùi bánh nướng thơm len qua từng con ngõ nhỏ.\nMình vẫn nhớ cái đêm đầu tiên hai đứa ngồi xem đèn trời bay lên 🏮 Cậu bảo ước gì năm nào cũng được như thế này.\nNăm nay đèn vẫn bay, trăng vẫn tròn, và mình thì vẫn ở đây ❤️ vẫn muốn nói với cậu đúng câu ấy thêm một lần nữa.\nChúc cậu một mùa Trung thu thật bình yên ✨ Mong những điều dịu dàng nhất luôn tìm được đường đến với cậu.`
 };
 
 const bgMusic = new Audio("music.mp3");
 bgMusic.loop = true;
-
 const musicBtn = document.getElementById("globalMusicBtn");
 
 function updateMusicIcon() {
@@ -352,7 +293,6 @@ function startAudio() {
 }
 
 startAudio();
-
 window.addEventListener("click", startAudio);
 window.addEventListener("touchstart", startAudio);
 window.addEventListener("pointerdown", startAudio);
@@ -373,14 +313,16 @@ const hint = document.querySelector(".hint");
 const letterCard = document.getElementById("letterCard");
 
 let W=0,H=0,dpr=1, raf=0, opened=false, holdTimer=0, typingTimer=0;
-let stars=[], lanterns=[], texts=[];
+let stars=[], lanterns=[], floatItems=[];
 let loadedLanternImgs = [];
+let loadedPhotoImgs = [];
 
-function preloadLanternImages() {
+function preloadImages() {
   CONFIG.lanternImages.forEach(url => {
-    const img = new Image();
-    img.src = url;
-    loadedLanternImgs.push(img);
+    const img = new Image(); img.src = url; loadedLanternImgs.push(img);
+  });
+  CONFIG.floatingPhotos.forEach(url => {
+    const img = new Image(); img.src = url; loadedPhotoImgs.push(img);
   });
 }
 
@@ -395,7 +337,7 @@ function resize(){
     const sx=newW/W, sy=newH/H;
     stars.forEach(s=>{s.x*=sx; s.y*=sy});
     lanterns.forEach(l=>{l.x*=sx; l.y*=sy});
-    texts.forEach(o=>{o.x*=sx; o.y*=sy});
+    floatItems.forEach(o=>{o.x*=sx; o.y*=sy});
   }
   W=newW; H=newH;
   if(!stars.length) makeStars();
@@ -447,29 +389,64 @@ function drawLanternImage(x, y, size, imgIdx) {
   ctx.restore();
 }
 
-function drawFlyingTexts(t, dt) {
+function getRandomItem() {
+  const isText = Math.random() < 0.5; // 50% tỉ lệ ra chữ, 50% ra ảnh
+  if (isText) {
+    return {
+      type: 'text',
+      val: CONFIG.flyingTexts[Math.floor(rand(0, CONFIG.flyingTexts.length))]
+    };
+  } else {
+    return {
+      type: 'image',
+      val: Math.floor(rand(0, loadedPhotoImgs.length))
+    };
+  }
+}
+
+/* VẼ VÀ CẬP NHẬT CHỮ + ẢNH TRÔI */
+function drawFloatingItems(t, dt) {
   ctx.save();
   ctx.font = `600 ${Math.max(14, Math.min(20, W * 0.018))}px Mali, serif`;
   ctx.textAlign = "center";
   
-  texts.forEach((o) => {
+  floatItems.forEach((o) => {
     o.y -= o.speed * (dt / 1000);
-    if (o.y < -50) {
-      o.text = CONFIG.flyingTexts[Math.floor(rand(0, CONFIG.flyingTexts.length))];
+    if (o.y < -60) {
+      const item = getRandomItem();
+      o.type = item.type;
+      o.val = item.val;
       o.x = rand(.05, .95) * W;
       o.y = H + rand(20, 80);
       o.speed = rand(18, 28);
+      o.size = rand(35, 55);
     }
     const flicker = .85 + .15 * Math.sin(t * .0012 + o.p);
     ctx.globalAlpha = flicker;
     
-    ctx.shadowColor = "#000000";
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
-    
-    ctx.fillStyle = "#ffe4b3";
-    ctx.fillText(o.text, o.x, o.y);
+    if (o.type === 'text') {
+      ctx.shadowColor = "#000000";
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 2;
+      ctx.fillStyle = "#ffe4b3";
+      ctx.fillText(o.val, o.x, o.y);
+    } else {
+      const img = loadedPhotoImgs[o.val % loadedPhotoImgs.length];
+      if (img && img.complete) {
+        ctx.save();
+        ctx.translate(o.x, o.y);
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "rgba(255, 230, 180, 0.4)";
+        // Vẽ khung bo góc nhẹ cho ảnh trôi
+        const sz = o.size;
+        ctx.beginPath();
+        ctx.roundRect(-sz/2, -sz/2, sz, sz, 8);
+        ctx.clip();
+        ctx.drawImage(img, -sz/2, -sz/2, sz, sz);
+        ctx.restore();
+      }
+    }
   });
   ctx.restore();
 }
@@ -489,19 +466,22 @@ function drawScene(t,dt){
     drawLanternImage(x, l.y, l.size, l.imgIdx);
   });
 
-  drawFlyingTexts(t, dt);
+  drawFloatingItems(t, dt);
 }
 
-function initTexts(){
+function initFloatItems(){
   const count = 22; 
-  texts = [];
+  floatItems = [];
   for(let i=0; i<count; i++){
-    texts.push({
-      text: CONFIG.flyingTexts[i % CONFIG.flyingTexts.length],
+    const item = getRandomItem();
+    floatItems.push({
+      type: item.type,
+      val: item.val,
       x: rand(.05, .95) * W,
       y: (H / count) * i + rand(-30, 30),
       p: rand(0, 6.28),
-      speed: rand(18, 28)
+      speed: rand(18, 28),
+      size: rand(35, 55)
     });
   }
 }
@@ -540,7 +520,6 @@ function closeLetter(){
   letterCard.classList.remove("hidden");
 }
 
-/* CHỨC NĂNG ẤN VÀ GIỮ 1.2S */
 function startHold(e){
   if(e.cancelable) e.preventDefault(); 
   if(opened) return;
@@ -568,7 +547,6 @@ moon.addEventListener("keyup",cancelHold);
 closeBtn.onclick=closeLetter; backdrop.onclick=closeLetter;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape" && opened) closeLetter(); });
 
-/* Nút trái tim nhỏ trên lá thư bắn hạt hiệu ứng trái tim */
 heartBtn.onclick = () => {
   for(let i=0; i<25; i++){
     const el = document.createElement("span");
@@ -596,9 +574,9 @@ addEventListener("resize", () => {
   resize();
 });
 
-preloadLanternImages();
+preloadImages();
 resize();
-initTexts();
+initFloatItems();
 loop(0);
 })();
 </script>
